@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>ITC</th>
+                <th>IT Config</th>
+                <th>Task ID</th>
+                <th>Environment</th>
+                <th>Owner DEV</th>
+                <th>App / Webapp</th>
+                <th>Version</th>
+                <th>Machines</th>
+                <th>Stg</th>
+                <th>P1</th>
+                <th>P2</th>
+                <th>Validation</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for tasks in list_deploy %}
+            <tr>
+                <td>{{ tasks.ITC }}</td>
+                <td>{{ tasks.ITC_todo }}</td>
+                <td><a href="https://jira.bank.swissquote.ch/browse/{{ tasks.TaskId }}" target="_blank">{{ tasks.TaskId }}</a></td>
+                <td>{{ tasks.Env }}</td>
+                <td>{{ tasks.OwnerFullName }}</td>
+                <td>{{ tasks.ArtifactId }}</td>
+                <td>{{ tasks.Version }}</td>
+                <td>{{ tasks.Servers }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ tasks.validation }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

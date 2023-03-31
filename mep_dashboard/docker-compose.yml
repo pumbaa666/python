@@ -1,0 +1,78 @@
+version: '3'
+services:
+  flaskapp:
+    build: ./
+    image: operations-mep-dashboard:0.0.1
+    container_name: flaskapp
+    links:
+      - mysql
+      - redis
+    volumes:
+      - /softwares/SQ/it_config/operations-mep-dashboard:/softwares/SQ/it_config/operations-mep-dashboard
+      - /softwares/SQ/it_config/master_key:/softwares/SQ/it_config/master_key
+      - ./src/app/:/app
+      - /logs/SQ/apps:/logs/SQ/apps
+    depends_on:
+      - mysql
+    networks:
+      - db_nw
+      - web_nw
+      - redis_nw
+  mysql:
+    image: docker.bank.swissquote.ch/mysql:8.0.3
+    container_name: mysql
+    volumes:
+      - /data/dashboard/db:/var/lib/mysql
+    environment:
+      - /softwares/SQ/it_config/operations-mep-dashboard/app.operations-mep-dashboard.properties
+    ports:
+      - 3306:3306
+    networks:
+      - db_nw
+      - myadmin_nw
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - mysql
+    ports:
+      - 8081:80
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on:
+      - mysql
+    networks:
+      - myadmin_nw
+  nginx:
+    image: docker.bank.swissquote.ch/nginx:1.11.10
+    container_name: nginx
+    ports:
+      - 8080:80
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+    depends_on:
+      - flaskapp
+    networks:
+      - web_nw
+  redis:
+    image: docker.bank.swissquote.ch/redis:3.2.8
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - /data/dashboard/redis:/data
+    networks:
+      - redis_nw
+    entrypoint: redis-server --appendonly no
+    restart: always
+networks:
+  db_nw:
+    driver: bridge
+  web_nw:
+    driver: bridge
+  myadmin_nw:
+    driver: bridge
+  redis_nw:
+    driver: bridge
+volumes:
+  dbdashboard:

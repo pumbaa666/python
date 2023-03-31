@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>Task ID</th>
+                <th>ID JIRA</th>
+                <th>Summary</th>
+                <th>Owner DEV</th>
+                <th>Version</th>
+                <th>Environment</th>
+                <th>App / Webapp</th>
+                <th>Changes</th>
+                <th>Risk</th>
+                <th>Client Impact</th>
+                <th>Scope</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for tasks in all_meps %}
+            <tr>
+                <td><a href="https://jira.bank.swissquote.ch/browse/{{ tasks.TaskId }}" target="_blank">{{ tasks.TaskId }}</a></td>
+                <td><a href="https://jira.bank.swissquote.ch/browse/{{ tasks.JiraId }}" target="_blank">{{ tasks.JiraId }}</a></td>
+                <td>{{ tasks.Summary }}</td>
+                <td>{{ tasks.OwnerFullName }}</td>
+                <td>{{ tasks.Version }}</td>
+                <td>{{ tasks.Env }}</td>
+                <td>{{ tasks.ArtifactId }}</td>
+                <td>{{ tasks.Changes }}</td>
+                {% if tasks.AppRisk %}
+                    {% if tasks['AppRisk'] == 'Low' %}
+                        <td class="table-success">{{ tasks.AppRisk }}</td>
+                    {% elif tasks['AppRisk'] == 'Medium' %}
+                        <td class="table-warning">{{ tasks.AppRisk }}</td>
+                    {% else %}
+                        <td class="table-danger">{{ tasks.AppRisk }}</td>
+                    {% endif %}
+                {% else %}
+                    <td></td>
+                {% endif %}
+                {% if tasks.AppImpact %}
+                    {% if tasks['AppImpact'] == 'Low' %}
+                        <td class="table-success">{{ tasks.AppImpact }}</td>
+                    {% elif tasks['AppImpact'] == 'Medium' %}
+                        <td class="table-warning">{{ tasks.AppImpact }}</td>
+                    {% else %}
+                        <td class="table-danger">{{ tasks.AppImpact }}</td>
+                    {% endif %}
+                {% else %}
+                    <td></td>
+                {% endif %}
+                {% if tasks.AppScope %}
+                    <td>{{ tasks.AppScope }}</td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
